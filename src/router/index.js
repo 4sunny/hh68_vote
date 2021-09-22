@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import VueRouter from "vue-router"
+import firebase from "firebase/compat/app"
+import "firebase/compat/auth"
 
 Vue.use(VueRouter);
 
@@ -60,7 +62,27 @@ const router = new VueRouter({
         meta: {
             title: 'Forgot Password'
         }
-    },] 
+    },
+    {
+        path: '/createuser',
+        name: 'createuser',
+        component: () => import('@/views/CreateUser.vue'),
+        meta:{
+            title: 'Create User'
+        },
+        beforeEnter(to, from, next) {
+                firebase.auth().onAuthStateChanged(() => {
+                    if (firebase.auth().currentUser.uid === "68AnWo2Wt1X8zhNfN4aoFcOBlDj1") {  
+                        console.log(firebase.auth().currentUser.uid)
+                        next();
+                    } 
+                    else {
+                        next('/home');
+                    }
+                });
+            }
+    }
+,] 
 });
 
 router.beforeEach((to, from, next) => {

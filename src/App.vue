@@ -39,7 +39,7 @@
     </v-app-bar>
 
     <v-main>
-      <router-view/>
+      <router-view/> 
     </v-main>
    <v-bottom-navigation v-show="!navigation" :value="value" color="primary" grow fixed>
     <v-btn value="Home" to='/'>
@@ -77,8 +77,8 @@
 </template>
 
 <script>
-// import firebase from "firebase/compat/app";
-// import "firebase/compat/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 export default {
   name: 'App',
   components: {
@@ -94,10 +94,11 @@ export default {
         if(
           this.$route.name == "login" ||
           this.$route.name == "resetpassword"
-        ){
+        ){ 
           this.navigation = true;
         }
         else{
+          console.log(firebase.auth().currentUser.uid)
           this.navigation = false;
         }
       },
