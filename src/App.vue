@@ -1,7 +1,6 @@
 <template>
   <v-app>
     <v-app-bar
-      v-show="!navigation"
       app
       color="primary"
       dark
@@ -38,7 +37,7 @@
         </div>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="mb-10">
       <router-view/> 
     </v-main>
    <v-bottom-navigation v-show="!navigation" :value="value" color="primary" grow fixed>
@@ -77,7 +76,6 @@
 </template>
 
 <script>
-import "firebase/compat/auth";
 export default {
   name: 'App',
   components: {
@@ -124,9 +122,6 @@ export default {
     },
   },
   created(){
-    // firebase.auth().onAuthStateChanged((user) => {
-    //   this.$store.commit("updateUser", user);
-    // });
     this.checkRoute();
   },
   watch:{

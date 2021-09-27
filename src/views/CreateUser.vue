@@ -28,9 +28,10 @@
 </template>
 
 <script>
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import db from "../firebase/firebaseInit";
+import { db } from "../firebase/firebaseInit";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { ref, set } from "firebase/database";
+
 export default {
   name: "CreateUser",
   components: {
@@ -58,18 +59,17 @@ export default {
         {
         this.error = false;
         this.errorMsg = "";
-        const firebaseAuth = await firebase.auth();
-        const createUser = await firebaseAuth.createUserWithEmailAndPassword(this.email, this.password);
+        const firebaseAuth = await getAuth(); 
+        const createUser = await createUserWithEmailAndPassword(firebaseAuth, this.email, this.password);
         const result = await createUser;
-        const dataBase = db.collection("users").doc(result.user.uid);
-        await dataBase.set({
+        await set(ref(db, 'users/' + result.user.uid), {
           firstName: this.firstName,
           lastName: this.lastName,
           email: this.email,
           votes: 20,
-          displayName: this.firstName + this.lastName.match(/(\b\S)?/g).join("")
+          displayName: result.user.displayName
         });
-        this.$router.push({ name: "Home" });
+        this.$router.push({ name: "home" });
         return;
       }
       this.error = true;

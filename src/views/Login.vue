@@ -34,9 +34,9 @@
 </template>
 
 <script>
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
 import "../firebase/firebaseInit.js";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 export default {
     name: 'Login',
     data() {
@@ -49,14 +49,11 @@ export default {
     },
     methods:{
       signIn(){
-        firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
+        signInWithEmailAndPassword( getAuth(), this.email, this.password)
         .then(() => {
           this.$router.push({ name: "home" });
           this.error = false;
           this.errorMsg = "";
-          console.log(firebase.auth().currentUser.uid);
         })
         .catch((err) => {
           this.error = true;

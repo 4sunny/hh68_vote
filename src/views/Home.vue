@@ -5,7 +5,18 @@
             <Post v-for="a in posts" :post="a" :key="a.id"></Post>
         </v-col>
     </v-row>
-    <h1>______</h1>
+        <v-btn
+            class="mb-14 mr-3"
+            fixed 
+            color="pink"
+            dark 
+            bottom 
+            right
+            fab
+            to="/createpost"
+        >
+        <v-icon>mdi-plus</v-icon>
+        </v-btn>
 </v-container> 
 </template>
 

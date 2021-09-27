@@ -51,8 +51,7 @@
 </template> 
 
 <script>
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 export default {
   name: "ForgotPassword",
   data() {
@@ -68,9 +67,8 @@ export default {
   methods: {
     resetPassword() {
       this.loading = true;
-      firebase
-        .auth()
-        .sendPasswordResetEmail(this.email)
+      const auth = getAuth()
+        sendPasswordResetEmail(auth, this.email)
         .then(() => {
           this.modalMessage = "If your account exists, you will receive a email";
           this.loading = false;
