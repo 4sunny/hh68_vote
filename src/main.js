@@ -10,7 +10,7 @@ import "./firebase/firebaseInit";
 
 Vue.config.productionTip = false
 
-
+//https://getavataaars.com/
 let app 
 firebase.auth().onAuthStateChanged(() => {
   if (!app){

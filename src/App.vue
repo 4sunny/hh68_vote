@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 export default {
   name: 'App',
@@ -97,8 +96,7 @@ export default {
         ){ 
           this.navigation = true;
         }
-        else{
-          console.log(firebase.auth().currentUser.uid)
+        else{ 
           this.navigation = false;
         }
       },
@@ -107,7 +105,6 @@ export default {
           this.$vuetify.theme.dark
         )
         {
-          console.log(this.$vuetify.theme.themes.dark.background)
           this.background = this.$vuetify.theme.themes.light.background;
         }
         else{
