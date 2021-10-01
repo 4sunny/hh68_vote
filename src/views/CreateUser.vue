@@ -7,6 +7,10 @@
       <h2>Create Your FireBlog Account</h2>
       <div class="inputs">
         <div class="input">
+          <input type="text" placeholder="color" v-model="color" />
+        </div>
+
+        <div class="input">
           <input type="text" placeholder="First Name" v-model="firstName" />
         </div>
         <div class="input">
@@ -29,9 +33,8 @@
 
 <script>
 import { db } from "../firebase/firebaseInit";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword,} from "firebase/auth";
 import { ref, set } from "firebase/database";
-
 export default {
   name: "CreateUser",
   components: {
@@ -43,6 +46,7 @@ export default {
       username: "",
       email: "",
       password: "",
+      color:"",
       error: null,
       errorMsg: "",
     };
@@ -67,7 +71,8 @@ export default {
           lastName: this.lastName,
           email: this.email,
           votes: 20,
-          displayName: result.user.displayName
+          userColor:this.color,
+          displayName: this.firstName + "." + this.lastName.match(/(\b\S)?/g).join("") 
         });
         this.$router.push({ name: "home" });
         return;

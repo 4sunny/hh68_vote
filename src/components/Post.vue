@@ -43,15 +43,20 @@
                     align="center"
                     justify="end"
                 >
-                    <v-icon class="mr-1">
-                    mdi-heart
-                    </v-icon>
-                    <span class="subheading mr-2">256</span>
-                    <span class="mr-1">·</span>
-                    <v-icon class="mr-1">
-                    mdi-share-variant
-                    </v-icon>
-                    <span class="subheading">45</span>
+                     <span class="subheading mr-2">{{ post.votes }} </span>
+                    <v-btn
+                        @click.prevent="increaseVotes"
+                        icon 
+                    >
+                        <v-icon >mdi-arrow-up-box </v-icon>
+                    </v-btn> 
+
+                    <v-btn
+                        @click.prevent="decreaseVotes"
+                        icon 
+                    >
+                        <v-icon >mdi-arrow-down-box </v-icon>
+                    </v-btn> 
                 </v-row>
                 </v-list-item>
             </v-card-actions>
@@ -75,6 +80,9 @@ export default {
         increaseVotes: function () {
             this.post.votes++;
         },
+        decreaseVotes: function () {
+            this.post.votes--;
+        },
         checkTruncated(){
             if(this.post.content.length > 60) 
             {   
@@ -93,7 +101,7 @@ export default {
         },       
     },
     created(){
-        this.checkTruncated();
+        this.checkTruncated(); 
     }
 }
 </script>

@@ -12,6 +12,10 @@
                   <template>Create your post</template>
                 </div>
                 <v-form> 
+                  <v-checkbox
+                    v-model="anonymous"
+                    :label="`Post anonymously`"
+                  ></v-checkbox>
                     Title
                   <v-text-field v-model="title" placeholder="Title"></v-text-field>
                     Description
@@ -31,7 +35,7 @@
 <script>
 import { db } from "../firebase/firebaseInit";
 import { getAuth } from "firebase/auth";
-import { ref, set, push } from "firebase/database";
+import { ref, set, push, child, get } from "firebase/database";
 
 export default {
     name:"CreatePost",
@@ -40,7 +44,8 @@ export default {
             title: "",
             content: "",
             error: null,
-            errorMsg: ""
+            errorMsg: "",
+            anonymous:false
         }
     },
     methods:{
@@ -53,15 +58,37 @@ export default {
             this.error = false;
             this.errorMsg = "";
             const user = getAuth(); 
-            console.log(user.currentUser.displayName)
-            set(push(ref(db, "posts")), {
-                    title: this.title,
-                    content: this.content,
-                    author: user.currentUser.displayName,
-                    votes: 0
-                }
-            ); 
-            this.$router.push({ name: "home" });
+            if (this.anonymous === true){
+              get(child(ref(db, "users/"), user.currentUser.uid)).then((snapshot) =>
+              {  
+                const value = snapshot.val()
+                set(push(ref(db, "posts")), {
+                        title: this.title,
+                        content: this.content,
+                        author: "Anonymous",
+                        uid: user.currentUser.uid, 
+                        color: value.userColor,
+                        votes: 0
+                    }
+                );
+              }); 
+            }
+            else{
+              get(child(ref(db, "users/"), user.currentUser.uid)).then((snapshot) =>
+              {  
+                const value = snapshot.val()
+                set(push(ref(db, "posts")), {
+                        title: this.title,
+                        content: this.content,
+                        author: value.displayName,
+                        uid: user.currentUser.uid, 
+                        color: value.userColor,
+                        votes: 0
+                    }
+                );
+              }); 
+            }
+                        this.$router.push({ name: "home" });
             return;
         }
         this.error = true;

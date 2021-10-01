@@ -2,9 +2,9 @@
 <v-container>
     <v-row dense>
         <v-col cols="12">
-            <Post v-for="a in posts" :post="a" :key="a.id"></Post>
-        </v-col>
-    </v-row>
+            <Post v-for="a in sortedPosts" :post="a" :key="a.key"></Post>
+        </v-col> 
+    </v-row> 
         <v-btn
             class="mb-14 mr-3"
             fixed 
@@ -13,7 +13,7 @@
             bottom 
             right
             fab
-            to="/createpost"
+            @click.prevent="yeet" 
         >
         <v-icon>mdi-plus</v-icon>
         </v-btn>
@@ -21,7 +21,9 @@
 </template>
 
 <script>
-import Post from '@/components/Post'
+import Post from '@/components/Post';
+import {db} from "../firebase/firebaseInit";
+import { get, ref, orderByChild, query} from "firebase/database";
 
 export default {
     components: {
@@ -29,20 +31,26 @@ export default {
     },
     data: function () {
         return {
+            sortedPosts: {} 
         }
-    },
-    computed: {
-        posts() {
-            return this.$store.state.posts 
-        }, 
-    },
+    }, 
+    mounted: function() {  
+        this.yeet();
+    }, 
     methods: {
-        createPost: function (post) {
-            post.votes = 0;
-            post.id = this.numSubmissions + 1;
-            this.submissions.push(post);
+        sortedSubmissions: function () {
+            const sortedRef = query(ref(db, "posts/"), orderByChild('votes'))
+            get(sortedRef).then((snapshot) => {
+            const data = snapshot.val();   
+            this.sortedPosts = data; 
+            });  
+        },
+        yeet: function () {
+            console.log(this.sortedPosts);
+            console.log(this.sortedSubmissions());
         }
-    }
+
+    }, 
 }
 </script>
 

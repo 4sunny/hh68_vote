@@ -16,7 +16,7 @@ export const store = new Vuex.Store({
         "votes": 20,
         "avatar": "./images/avatars/daniel.jpg",
         "submissionImage": "./images/submissions/image-yellow.png",
-        "author":"Jimmy locos"
+        "author":"Jimmy locos", 
         },
         {
         "id": 2,
@@ -60,7 +60,12 @@ export const store = new Vuex.Store({
             state.isDarkTheme = payload;
         }
     },
-    action:{},
+    action:{
+        // getPost({state}){
+            
+
+        // }
+    },
     modules:{}, 
 })
 
