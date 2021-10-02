@@ -38,7 +38,7 @@
     </v-app-bar>
 
     <v-main class="mb-10">
-      <router-view/> 
+      <router-view /> 
     </v-main>
    <v-bottom-navigation v-show="!navigation" :value="value" color="primary" grow fixed>
     <v-btn value="Home" to='/'>

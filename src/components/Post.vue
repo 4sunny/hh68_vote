@@ -2,7 +2,7 @@
 <div class="pt-4">
         <v-card
             class="mx-auto"
-            color="#26c6da"
+            :color= "post.color"
             dark
             max-width="400"
             >
@@ -43,7 +43,7 @@
                     align="center"
                     justify="end"
                 >
-                     <span class="subheading mr-2">{{ post.votes }} </span>
+                     <span class="subheading mr-2">{{ post.totalVotes }} </span>
                     <v-btn
                         @click.prevent="increaseVotes"
                         icon 
@@ -61,28 +61,83 @@
                 </v-list-item>
             </v-card-actions>
         </v-card> 
+    <v-snackbar
+        v-model="snackbar"
+      >
+        You do not have any votes remaining! 
+  
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="pink"
+            text
+            v-bind="attrs"
+            @click="snackbar = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </div>
 </template>
 
 <script>
+import firebase from "firebase/compat/app";
+import "firebase/compat/database"
+import {db, auth} from "../firebase/firebaseInit";
+import {ref, update,} from "firebase/database";
+
 export default {
     name: 'Post',
     data(){
         return{
             isTruncated: null,
             trunkText: "",
+            uid: auth.currentUser.uid,
+            snackbar:false,
         }
     },
     props:{
         post: null,
+        pKey: null, 
+        userVotes:null,
     },
     methods: {
+        // increaseVotes: function () {   
+        //     update(child(ref(db),
+        //     "posts/" + this.pKey + "/votes/"), {
+        //         [this.uid]: this.post.votes[this.uid] + 1
+        //     });
+        //     update(child(ref(db), "posts/" + this.pKey + "/data/"), {
+        //         totalVotes: this.post.data.totalVotes + 1
+        //     });
+        //     updat    methods: {
+        // increaseVotes: function () {   
+    
+
         increaseVotes: function () {
-            this.post.votes++;
+            if(this.userVotes > 0){
+                const updates = {};
+                updates[`posts/${this.pKey}/votes/${this.uid}`] = firebase.database.ServerValue.increment(1);
+                updates[`posts/${this.pKey}/totalVotes`] = firebase.database.ServerValue.increment(1); 
+                updates[`users/${this.uid}/votes`] = firebase.database.ServerValue.increment(-1);
+                update(ref(db), updates);  
+                console.log(this.userVotes);
+            }
+            else{
+                this.snackbar = true;
+            }
         },
         decreaseVotes: function () {
-            this.post.votes--;
-        },
+            if (this.uid in this.post.votes){ 
+                if (this.post.votes[this.uid] > 0){
+                    const updates = {};
+                    updates[`posts/${this.pKey}/votes/${this.uid}`] = firebase.database.ServerValue.increment(-1);
+                    updates[`posts/${this.pKey}/totalVotes`] = firebase.database.ServerValue.increment(-1);
+                    updates[`users/${this.uid}/votes`] = firebase.database.ServerValue.increment(1);
+                    update(ref(db), updates); 
+                }  
+            }
+        }, 
         checkTruncated(){
             if(this.post.content.length > 60) 
             {   
@@ -95,10 +150,10 @@ export default {
             }
         }
     },
-    computed: {
+    computed: {  
         isHot: function () {
-            return this.post.votes >= 20;
-        },       
+            return this.post.totalVotes >= 20;
+        },
     },
     created(){
         this.checkTruncated(); 

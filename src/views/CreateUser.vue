@@ -72,7 +72,7 @@ export default {
           email: this.email,
           votes: 20,
           userColor:this.color,
-          displayName: this.firstName + "." + this.lastName.match(/(\b\S)?/g).join("") 
+          displayName: this.firstName + "." + this.lastName.match(/(\b\S)?/g).join("")
         });
         this.$router.push({ name: "home" });
         return;

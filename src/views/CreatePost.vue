@@ -29,7 +29,7 @@
         </v-layout>
       </v-container>
     </v-main>
-  </v-app> 
+  </v-app>  
 </template>
 
 <script>
@@ -62,13 +62,16 @@ export default {
               get(child(ref(db, "users/"), user.currentUser.uid)).then((snapshot) =>
               {  
                 const value = snapshot.val()
-                set(push(ref(db, "posts")), {
-                        title: this.title,
-                        content: this.content,
-                        author: "Anonymous",
-                        uid: user.currentUser.uid, 
-                        color: value.userColor,
-                        votes: 0
+                set(push(ref(db, "posts")), { 
+                      title: this.title,
+                      content: this.content,
+                      author: "Anonymous",
+                      uid: user.currentUser.uid, 
+                      color: value.userColor, 
+                      totalVotes: 1, 
+                      votes: {
+                        [user.currentUser.uid]: 1,
+                      }
                     }
                 );
               }); 
@@ -77,13 +80,16 @@ export default {
               get(child(ref(db, "users/"), user.currentUser.uid)).then((snapshot) =>
               {  
                 const value = snapshot.val()
-                set(push(ref(db, "posts")), {
-                        title: this.title,
-                        content: this.content,
-                        author: value.displayName,
-                        uid: user.currentUser.uid, 
-                        color: value.userColor,
-                        votes: 0
+                set(push(ref(db, "posts")), { 
+                      title: this.title,
+                      content: this.content,
+                      author: value.displayName, 
+                      uid: user.currentUser.uid, 
+                      color: value.userColor, 
+                      totalVotes: 1,
+                      votes: {
+                        [user.currentUser.uid]: 1,
+                      }
                     }
                 );
               }); 
