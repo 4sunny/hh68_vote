@@ -15,8 +15,18 @@
                 mdi-fire-alert
                 </v-icon>
                 <span class="text-h5 font-weight-bold"> {{ post.title }}</span>
-            </v-card-title>
-        
+              <v-row align="center" justify="end">
+                <v-btn 
+                v-show="isMine"
+                @click.prevent="deletePost"
+                medium
+                left
+                icon
+                >
+                <v-icon>mdi-delete</v-icon>
+                </v-btn>
+            </v-row>  
+            </v-card-title>  
                 <v-card-text v-if="!isTruncated" class="text-h6 font-weight-light">
                 {{ post.content }} 
                 </v-card-text>
@@ -33,7 +43,7 @@
                     alt=""
                     src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
                     ></v-img>
-                </v-list-item-avatar>
+                </v-list-item-avatar> 
         
                 <v-list-item-content>
                     <v-list-item-title> {{ post.author }}</v-list-item-title>
@@ -43,7 +53,7 @@
                     align="center"
                     justify="end"
                 >
-                     <span class="subheading mr-2">{{ post.totalVotes }} </span>
+                     <span class="subheading mr-2"> {{post.votes[this.uid]}} / {{ post.totalVotes }} </span>
                     <v-btn
                         @click.prevent="increaseVotes"
                         icon 
@@ -84,7 +94,7 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/database"
 import {db, auth} from "../firebase/firebaseInit";
-import {ref, update,} from "firebase/database";
+import {child, get,ref, update, remove} from "firebase/database";
 
 export default {
     name: 'Post',
@@ -119,9 +129,9 @@ export default {
                 const updates = {};
                 updates[`posts/${this.pKey}/votes/${this.uid}`] = firebase.database.ServerValue.increment(1);
                 updates[`posts/${this.pKey}/totalVotes`] = firebase.database.ServerValue.increment(1); 
+                updates[`posts/${this.pKey}/rank`] = firebase.database.ServerValue.increment(-1);
                 updates[`users/${this.uid}/votes`] = firebase.database.ServerValue.increment(-1);
-                update(ref(db), updates);  
-                console.log(this.userVotes);
+                update(ref(db), updates);   
             }
             else{
                 this.snackbar = true;
@@ -133,6 +143,7 @@ export default {
                     const updates = {};
                     updates[`posts/${this.pKey}/votes/${this.uid}`] = firebase.database.ServerValue.increment(-1);
                     updates[`posts/${this.pKey}/totalVotes`] = firebase.database.ServerValue.increment(-1);
+                    updates[`posts/${this.pKey}/rank`] = firebase.database.ServerValue.increment(1);
                     updates[`users/${this.uid}/votes`] = firebase.database.ServerValue.increment(1);
                     update(ref(db), updates); 
                 }  
@@ -148,12 +159,25 @@ export default {
             else{
                 this.isTruncated = false;
             }
+        },
+        deletePost(){ 
+            get(child(ref(db), `posts/${this.pKey}/votes`)).then((snapshot) => { 
+                snapshot.forEach((childSnap) => { 
+                   update(ref(db), {
+                       [`users/${childSnap.key}/votes`]:firebase.database.ServerValue.increment(childSnap.val())
+                   }); 
+                });
+                remove(child(ref(db), 'posts/' + this.pKey));
+            });
         }
     },
     computed: {  
         isHot: function () {
             return this.post.totalVotes >= 20;
         },
+        isMine: function (){
+            return auth.currentUser.uid === this.post.uid
+        }
     },
     created(){
         this.checkTruncated(); 

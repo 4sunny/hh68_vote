@@ -6,12 +6,12 @@
         </v-col> 
     </v-row> 
         <v-btn
-            class="mb-14 mr-3"
-            fixed 
+            class="mb-14 ml-3"
+            fixed  
             :color="this.userColor"
             dark 
             bottom 
-            right
+            left
             fab
             to="/createpost" 
         >
@@ -33,7 +33,7 @@ export default {
         return {
             sortedPosts: {},
             userVotes: null,
-            userColor: null,
+            userColor: null,  
         }
     }, 
     mounted: function() { 
@@ -41,11 +41,13 @@ export default {
         this.userVoteCount();
     }, 
     methods: {
-        sortedSubmissions: function () {
-            const sortedRef = query(ref(db, "posts/"), orderByChild('totalVotes'))
-            onValue(sortedRef, (snapshot) => {
-            const data = snapshot.val();   
-            this.sortedPosts = data; 
+        sortedSubmissions: function () { 
+            onValue(query(ref(db, "posts"), orderByChild('rank')), (snapshot) => {  
+                const sortedsnaps = {}
+                snapshot.forEach((childSnap) => {    
+                    sortedsnaps[childSnap.key] = childSnap.val();
+                });
+                this.sortedPosts = sortedsnaps; 
             });  
         }, 
         userVoteCount: function() {
@@ -53,7 +55,7 @@ export default {
                this.userColor = snapshot.val().userColor;
                this.userVotes = snapshot.val().votes; 
             });
-        }
+        },
     }, 
 }
 </script>

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from "vue-router"
-import { getAuth } from "firebase/auth"
+import { auth } from "../firebase/firebaseInit"
 
 Vue.use(VueRouter);
 
@@ -70,8 +70,8 @@ const router = new VueRouter({
             title: 'Create User'
         },
         beforeEnter(to, from, next) {
-                getAuth().onAuthStateChanged(() => {
-                    if (getAuth().currentUser.uid === "68AnWo2Wt1X8zhNfN4aoFcOBlDj1") {   
+                auth.onAuthStateChanged(() => {
+                    if (auth.currentUser.uid === "68AnWo2Wt1X8zhNfN4aoFcOBlDj1") {   
                         next();
                     } 
                     else {
@@ -101,6 +101,11 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | HH68`;
+    auth.onAuthStateChanged((user) =>{ 
+        if(to.name !== 'login' && !user){
+            next('/login');
+        }
+    }) 
     next();
 })
 

@@ -58,23 +58,20 @@ export default {
             this.error = false;
             this.errorMsg = "";
             const user = getAuth(); 
-            if (this.anonymous === true){
-              get(child(ref(db, "users/"), user.currentUser.uid)).then((snapshot) =>
-              {  
-                const value = snapshot.val()
+            if (this.anonymous === true){ 
                 set(push(ref(db, "posts")), { 
                       title: this.title,
                       content: this.content,
                       author: "Anonymous",
                       uid: user.currentUser.uid, 
-                      color: value.userColor, 
-                      totalVotes: 1, 
+                      color: '#808080', 
+                      rank: 1000,
+                      totalVotes: 0, 
                       votes: {
-                        [user.currentUser.uid]: 1,
+                        [user.currentUser.uid]: 0,
                       }
                     }
-                );
-              }); 
+                ); 
             }
             else{
               get(child(ref(db, "users/"), user.currentUser.uid)).then((snapshot) =>
@@ -86,9 +83,10 @@ export default {
                       author: value.displayName, 
                       uid: user.currentUser.uid, 
                       color: value.userColor, 
-                      totalVotes: 1,
+                      rank: 1000,
+                      totalVotes: 0,
                       votes: {
-                        [user.currentUser.uid]: 1,
+                        [user.currentUser.uid]: 0,
                       }
                     }
                 );
