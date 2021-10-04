@@ -1,6 +1,6 @@
 <template>
     <div class="h1">
-        <h1> Page doesn't exit </h1>
+        <h1> Page doesn't exist </h1>
     </div>
 </template>
 

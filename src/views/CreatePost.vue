@@ -67,6 +67,7 @@ export default {
                       color: '#808080', 
                       rank: 1000,
                       totalVotes: 0, 
+                      avatar: '',
                       votes: {
                         [user.currentUser.uid]: 0,
                       }
@@ -85,6 +86,7 @@ export default {
                       color: value.userColor, 
                       rank: 1000,
                       totalVotes: 0,
+                      avatar: value.avatar,
                       votes: {
                         [user.currentUser.uid]: 0,
                       }

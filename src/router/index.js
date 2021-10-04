@@ -39,14 +39,6 @@ const router = new VueRouter({
         }
     },
     {
-        path: '/guide',
-        name: 'guide',
-        component: () => import('@/views/Guide.vue'),
-        meta: {
-            title: 'Guide'
-        }
-    },
-    {
         path: '/login',
         name: 'login',
         component: () => import('@/views/Login.vue'),
@@ -75,13 +67,13 @@ const router = new VueRouter({
                         next();
                     } 
                     else {
-                        next('/nopage');
+                        next('nopage');
                     }
                 });
             }
     },
     {
-            path: '/nopage',
+            path: '*',
             name: 'nopage',
             component: () => import('@/views/NoPage.vue'),
             meta: {
@@ -95,8 +87,8 @@ const router = new VueRouter({
             meta: {
                 title: 'Create Post'
             }
-    }
-,] 
+    }, 
+] 
 });
 
 router.beforeEach((to, from, next) => {

@@ -55,7 +55,7 @@ export default {
     async register() {
       if (
         this.email !== "" &&
-        this.email.split('@')[1] === 'mail.utoronto.ca' &&
+        this.email !== "" &&
         this.password !== "" &&
         this.firstName !== "" &&
         this.lastName !== "" 
@@ -72,7 +72,8 @@ export default {
           email: this.email,
           votes: 20,
           userColor:this.color,
-          displayName: this.firstName + "." + this.lastName.match(/(\b\S)?/g).join("")
+          displayName: this.firstName + "." + this.lastName.match(/(\b\S)?/g).join(""),
+          avatar: "https://avataaars.io/?avatarStyle=Transparent&topType=NoHair",
         });
         this.$router.push({ name: "home" });
         return;

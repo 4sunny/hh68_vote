@@ -2,6 +2,7 @@
 <v-container>
     <v-row dense>
         <v-col cols="12">
+            {{ userVotes }} votes remaining
             <Post v-for="(a,k) in sortedPosts" :post="a" :key="a.key" :pKey="k" :userVotes="userVotes"></Post>
         </v-col> 
     </v-row> 

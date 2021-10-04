@@ -28,11 +28,12 @@
             </v-row>  
             </v-card-title>  
                 <v-card-text v-if="!isTruncated" class="text-h6 font-weight-light">
-                {{ post.content }} 
+                {{  this.post.content }}
                 </v-card-text>
 
                 <v-card-text v-if="isTruncated" class="text-h6 font-weight-light">
-                {{ trunkText }}  
+                {{ this.post.content.slice(0, 80) + "..." }} 
+                <a v-show="isReadMore" class="grey white--text" @click.prevent="readMore">Read More</a>
                 </v-card-text>
         
             <v-card-actions>
@@ -41,7 +42,7 @@
                     <v-img
                     class="elevation-6"
                     alt=""
-                    src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
+                    :src="post.avatar"
                     ></v-img>
                 </v-list-item-avatar> 
         
@@ -100,10 +101,9 @@ export default {
     name: 'Post',
     data(){
         return{
-            isTruncated: null,
-            trunkText: "",
+            isTruncated: true,
             uid: auth.currentUser.uid,
-            snackbar:false,
+            snackbar:false, 
         }
     },
     props:{
@@ -149,16 +149,8 @@ export default {
                 }  
             }
         }, 
-        checkTruncated(){
-            if(this.post.content.length > 60) 
-            {   
-                this.isTruncated = true;
-                this.trunkText = this.post.content.slice(0,80) + "..."
-                return;
-            }
-            else{
-                this.isTruncated = false;
-            }
+        readMore(){ 
+            this.isTruncated = false;
         },
         deletePost(){ 
             get(child(ref(db), `posts/${this.pKey}/votes`)).then((snapshot) => { 
@@ -177,11 +169,16 @@ export default {
         },
         isMine: function (){
             return auth.currentUser.uid === this.post.uid
+        },
+        isReadMore: function() {
+            if(this.post.content.length > 60){
+                return true
+            }
+            else{
+                return false
+            }
         }
-    },
-    created(){
-        this.checkTruncated(); 
-    }
+    }, 
 }
 </script>
 

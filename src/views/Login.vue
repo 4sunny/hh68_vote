@@ -23,7 +23,7 @@
             <v-layout align-center='align-center' justify-center="justify-center">
               <div class="d-flex flex-column pt-6">
                 <template> Don't have an account? </template> 
-                <v-btn light="light" to="stats">Pay Your Due</v-btn>
+                <v-btn light="light" href="mailto:sunghyoun.kim@mail.utoronto.ca">Contact Sunny</v-btn>
               </div>
             </v-layout>
           </v-flex>

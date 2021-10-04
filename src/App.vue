@@ -5,7 +5,7 @@
       color="primary"
       dark
     >
-      <div class="d-flex align-center">
+      <div @click.stop="toHome" class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
           class="shrink mr-2"
@@ -28,7 +28,7 @@
 
       <v-spacer></v-spacer>
         <div class="d-flex"> 
-          <v-switch :color="background" class="switch-center" v-model="isDarkTheme"> 
+          <v-switch class="switch-center" v-model="isDarkTheme" @change="toggleDarkTheme"> 
             <template v-slot:label>
               <v-icon v-show="!isDarkTheme">mdi-moon-full</v-icon>
               <v-icon v-show="isDarkTheme">mdi-moon-new</v-icon>
@@ -37,45 +37,43 @@
         </div>
     </v-app-bar>
 
-    <v-main class="mb-10">
+    <v-main>
       <router-view /> 
     </v-main>
-   <v-bottom-navigation v-show="!navigation" :value="value" color="primary" grow fixed>
-    <v-btn value="Home" to='/'>
+
+   <v-bottom-navigation v-show="!navigation" color="primary" height="56px" grow fixed>
+    <v-btn to='/' height="56px">
       <span>Home</span>
 
       <v-icon>mdi-home</v-icon>
     </v-btn>
 
-    <v-btn value="stats" to='/stats'>
+    <!-- <v-btn to='/stats'>
       <span>Stats</span>
 
       <v-icon>mdi-poll</v-icon>
     </v-btn>
-
-    <v-btn value="account" to="account">
+ -->
+    <v-btn to="account" height="56px">
       <span>Account</span>
 
       <v-icon>mdi-account</v-icon>
     </v-btn>
 
-    <v-btn value="blog" to='/blog'>
+    <!-- <v-btn to='/blog'>
       <span>Blog</span>
 
       <v-icon>mdi-newspaper-variant</v-icon>
-    </v-btn>
+    </v-btn> -->
 
-    <v-btn value="guide" to='guide'>
-      <span>Guide</span>
-
-      <v-icon>mdi-help-circle</v-icon>
-    </v-btn>
   </v-bottom-navigation>
   </v-app>
 
 </template>
 
 <script>
+import {db, auth} from "./firebase/firebaseInit";
+import {get, ref, child, update} from "firebase/database";
 export default {
   name: 'App',
   components: {
@@ -84,9 +82,12 @@ export default {
   data: () => ({ 
     value: 0,
     navigation: null,
-    background: "", 
+    isDarkTheme: null,
   }),
   methods:{ 
+      toHome(){
+        this.$router.push({ name: "home" });
+      },
       checkRoute(){
         if(
           this.$route.name == "login" ||
@@ -95,32 +96,23 @@ export default {
           this.navigation = true;
         }
         else{ 
+          get(child(ref(db), `users/${auth.currentUser.uid}`)).then((snapshot) => {
+              this.$vuetify.theme.themes.light.primary = snapshot.val().userColor;
+              this.$vuetify.theme.themes.dark.primary = snapshot.val().userColor;
+              this.isDarkTheme = snapshot.val().isDarkTheme; 
+              this.$vuetify.theme.dark = this.isDarkTheme
+            });
           this.navigation = false;
         }
-      },
-      checkBackground(){
-        if(
-          this.$vuetify.theme.dark
-        )
-        {
-          this.background = this.$vuetify.theme.themes.light.background;
-        }
-        else{
-          this.background = this.$vuetify.theme.themes.dark.background;
-        }
-      } 
-  }, 
-  computed:{
-    isDarkTheme:{
-      get(){
-        return this.$vuetify.theme.dark;
-      },
-      set(payload){
-        this.$vuetify.theme.dark = payload;
-        this.checkBackground();
+      },  
+      toggleDarkTheme(){
+        update(ref(db), {
+          [`users/${auth.currentUser.uid}/isDarkTheme`]: this.isDarkTheme
+        });
+          this.$vuetify.theme.dark = this.isDarkTheme 
       }
-    },
-  },
+  }, 
+  
   created(){
     this.checkRoute();
   },
@@ -132,4 +124,3 @@ export default {
   } 
 };
 </script>
-
